@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Brew & Bean</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22><text y=%2226%22 font-size=%2226%22>☕</text></svg>">
+</head>
+<body>
+
+  <!-- Mobile Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar(false)"></div>
+
+  <div class="admin-layout">
+    
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">☕</div>
+        <div class="brand-text">
+          <h2>Brew &amp; Bean</h2>
+          <span>Admin Portal</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Management</div>
+        
+        <button class="sidebar-link active" data-target="dashboard" onclick="switchSection('dashboard', this)">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="sidebar-link" data-target="products" onclick="switchSection('products', this)">
+          <span class="nav-icon">☕</span>
+          <span>Products</span>
+          <span class="nav-badge" id="sidebar-products-badge">31</span>
+        </button>
+
+        <button class="sidebar-link" data-target="categories" onclick="switchSection('categories', this)">
+          <span class="nav-icon">🏷️</span>
+          <span>Categories</span>
+        </button>
+
+        <button class="sidebar-link" data-target="orders" onclick="switchSection('orders', this)">
+          <span class="nav-icon">📦</span>
+          <span>Orders</span>
+        </button>
+
+        <button class="sidebar-link" data-target="subscriptions" onclick="switchSection('subscriptions', this)">
+          <span class="nav-icon">⭐</span>
+          <span>Subscriptions</span>
+        </button>
+
+        <div class="nav-section-label">System</div>
+
+        <button class="sidebar-link" data-target="settings" onclick="switchSection('settings', this)">
+          <span class="nav-icon">⚙️</span>
+          <span>Settings</span>
+        </button>
+
+        <a href="../index.html" target="_blank" class="sidebar-link">
+          <span class="nav-icon">🌐</span>
+          <span>View Live Store ↗</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="admin-user-info">
+          <div class="avatar" id="admin-avatar">A</div>
+          <div>
+            <div class="user-name" id="admin-email">Admin</div>
+            <div class="user-role" id="admin-role">Administrator</div>
+          </div>
+        </div>
+        <!-- Admin Logout Button (Requirement 7) -->
+        <button type="button" class="btn-logout" id="btn-admin-logout" onclick="logoutAdmin()">
+          <span>🚪</span> Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="admin-main">
+      
+      <!-- Top Header -->
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="hamburger-admin" onclick="toggleMobileSidebar(true)" title="Toggle Menu">☰</button>
+          <div>
+            <h1 class="page-title" id="page-title">Dashboard Overview</h1>
+            <div class="page-subtitle" id="page-subtitle">Brew &amp; Bean Artisanal Coffee Operations</div>
+          </div>
+        </div>
+        <div class="header-right">
+          <span class="header-time" id="clock-display"></span>
+          <span class="header-badge">● Live Supabase</span>
+        </div>
+      </header>
+
+      <!-- Content Panels -->
+      <div class="admin-content">
+
+        <!-- ─────────────────────────────────────────────
+             SECTION 1: DASHBOARD OVERVIEW
+        ───────────────────────────────────────────── -->
+        <section id="section-dashboard" class="section-panel active">
+          <!-- Stats Grid -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon coffee">☕</div>
+              <div class="stat-info">
+                <div class="stat-label">Total Products</div>
+                <div class="stat-value" id="stat-total-products">—</div>
+                <div class="stat-sub">Across 5 categories</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon orders">📦</div>
+              <div class="stat-info">
+                <div class="stat-label">Total Orders</div>
+                <div class="stat-value" id="stat-total-orders">—</div>
+                <div class="stat-sub">Lifetime guest orders</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon pending">⏳</div>
+              <div class="stat-info">
+                <div class="stat-label">Pending Orders</div>
+                <div class="stat-value" id="stat-pending-orders">—</div>
+                <div class="stat-sub">Needs fulfillment</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon revenue">💰</div>
+              <div class="stat-info">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value" id="stat-total-revenue">—</div>
+                <div class="stat-sub">Excludes cancelled</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon subs">⭐</div>
+              <div class="stat-info">
+                <div class="stat-label">Active Subscriptions</div>
+                <div class="stat-value" id="stat-active-subs">—</div>
+                <div class="stat-sub">Monthly club members</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Bar -->
+          <div class="section-header" style="margin-top: 10px;">
+            <h2>Quick Actions</h2>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="btn btn-primary btn-sm" onclick="switchSection('products', null); openAddProductModal();">
+                + Add Product
+              </button>
+              <button class="btn btn-secondary btn-sm" onclick="switchSection('orders', null);">
+                View Recent Orders
+              </button>
+            </div>
+          </div>
+
+          <!-- Recent Activity Cards -->
+          <div class="recent-grid">
+            <div class="recent-card">
+              <div class="recent-card-header">
+                <h3>Recent Orders</h3>
+                <button class="btn btn-secondary btn-xs" onclick="switchSection('orders', null)">View All</button>
+              </div>
+              <div class="recent-card-body" id="recent-orders-list">
+                <div class="loading-overlay"><div class="spinner"></div>Loading...</div>
+              </div>
+            </div>
+
+            <div class="recent-card">
+              <div class="recent-card-header">
+                <h3>Recent Memberships</h3>
+                <button class="btn btn-secondary btn-xs" onclick="switchSection('subscriptions', null)">View All</button>
+              </div>
+              <div class="recent-card-body" id="recent-subs-list">
+                <div class="loading-overlay"><div class="spinner"></div>Loading...</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────────────────────────────────────────
+             SECTION 2: PRODUCTS MANAGEMENT
+        ───────────────────────────────────────────── -->
+        <section id="section-products" class="section-panel">
+          <div class="section-header">
+            <div>
+              <h2>Products &amp; Variants</h2>
+              <p style="font-size:0.8rem; color:var(--gray-400);">Manage your live menu products, prices, and sizes</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <span class="badge badge-coffee" id="products-count-badge">Loading...</span>
+              <button class="btn btn-primary" onclick="openAddProductModal()">
+                <span>+</span> Add Product
+              </button>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="filter-bar">
+            <div class="search-input-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="product-search" class="search-input" placeholder="Search product name, description..." oninput="renderProductsTable()">
+            </div>
+            <select id="product-category-filter" class="filter-select" onchange="renderProductsTable()">
+              <option value="all">All Categories</option>
+            </select>
+            <select id="product-avail-filter" class="filter-select" onchange="renderProductsTable()">
+              <option value="all">All Statuses</option>
+              <option value="available">Available Only</option>
+              <option value="unavailable">Unavailable Only</option>
+            </select>
+            <button class="btn btn-secondary btn-sm" onclick="loadAdminProducts()">🔄 Refresh</button>
+          </div>
+
+          <!-- Products Table -->
+          <div class="table-card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Product Name &amp; Description</th>
+                    <th>Category</th>
+                    <th>Pricing &amp; Sizes</th>
+                    <th>Availability</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="products-table-body">
+                  <tr>
+                    <td colspan="6" class="table-empty">
+                      <div class="spinner" style="margin: 0 auto 12px;"></div>
+                      <p>Loading products from Supabase...</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────────────────────────────────────────
+             SECTION 3: CATEGORIES MANAGEMENT
+        ───────────────────────────────────────────── -->
+        <section id="section-categories" class="section-panel">
+          <div class="section-header">
+            <div>
+              <h2>Product Categories</h2>
+              <p style="font-size:0.8rem; color:var(--gray-400);">Organize menu items into customer-facing category tabs</p>
+            </div>
+            <button class="btn btn-primary" onclick="openAddCategoryModal()">
+              <span>+</span> Add Category
+            </button>
+          </div>
+
+          <div class="cat-grid" id="categories-grid">
+            <div class="loading-overlay"><div class="spinner"></div>Loading categories...</div>
+          </div>
+        </section>
+
+        <!-- ─────────────────────────────────────────────
+             SECTION 4: ORDERS MANAGEMENT
+        ───────────────────────────────────────────── -->
+        <section id="section-orders" class="section-panel">
+          <div class="section-header">
+            <div>
+              <h2>Customer Orders</h2>
+              <p style="font-size:0.8rem; color:var(--gray-400);">Fulfill guest orders and update tracking status</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <span class="badge badge-coffee" id="orders-count-badge">Loading...</span>
+              <button class="btn btn-secondary btn-sm" onclick="loadAdminOrders()">🔄 Refresh</button>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="filter-bar">
+            <div class="search-input-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="order-search" class="search-input" placeholder="Search order #, customer name, mobile..." oninput="renderOrdersTable()">
+            </div>
+            <select id="order-status-filter" class="filter-select" onchange="renderOrdersTable()">
+              <option value="all">All Order Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Preparing">Preparing</option>
+              <option value="Out for Delivery">Out for Delivery</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <!-- Orders Table -->
+          <div class="table-card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Order # &amp; Date</th>
+                    <th>Customer</th>
+                    <th>Items Summary</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Pay Status</th>
+                    <th>Order Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                  <tr>
+                    <td colspan="8" class="table-empty">
+                      <div class="spinner" style="margin: 0 auto 12px;"></div>
+                      <p>Loading orders from Supabase...</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────────────────────────────────────────
+             SECTION 5: SUBSCRIPTIONS MANAGEMENT
+        ───────────────────────────────────────────── -->
+        <section id="section-subscriptions" class="section-panel">
+          <div class="section-header">
+            <div>
+              <h2>Coffee Club Subscriptions</h2>
+              <p style="font-size:0.8rem; color:var(--gray-400);">Manage monthly recurring members and discounts</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <span class="badge badge-coffee" id="subs-count-badge">Loading...</span>
+              <button class="btn btn-secondary btn-sm" onclick="loadAdminSubscriptions()">🔄 Refresh</button>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="filter-bar">
+            <div class="search-input-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="subs-search" class="search-input" placeholder="Search reference, customer name, phone..." oninput="renderSubsTable()">
+            </div>
+            <select id="subs-status-filter" class="filter-select" onchange="renderSubsTable()">
+              <option value="all">All Memberships</option>
+              <option value="Active">Active</option>
+              <option value="Pending">Pending Payment</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <!-- Subscriptions Table -->
+          <div class="table-card">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Reference</th>
+                    <th>Customer Details</th>
+                    <th>Plan</th>
+                    <th>Fee</th>
+                    <th>Period</th>
+                    <th>Payment Status</th>
+                    <th>Membership Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="subs-table-body">
+                  <tr>
+                    <td colspan="8" class="table-empty">
+                      <div class="spinner" style="margin: 0 auto 12px;"></div>
+                      <p>Loading subscriptions from Supabase...</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────────────────────────────────────────
+             SECTION 6: SETTINGS & SYSTEM INFO
+        ───────────────────────────────────────────── -->
+        <section id="section-settings" class="section-panel">
+          <div class="section-header">
+            <div>
+              <h2>Store &amp; Database Settings</h2>
+              <p style="font-size:0.8rem; color:var(--gray-400);">Configuration, security rules, and deployment details</p>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+            <!-- Database Info -->
+            <div class="table-card" style="padding: 24px;">
+              <h3 style="font-family: var(--font-serif); color: var(--coffee); margin-bottom: 16px;">Supabase Database</h3>
+              <div style="display: flex; flex-direction: column; gap: 12px; font-size: 0.88rem;">
+                <div><strong>Project URL:</strong> <code style="word-break: break-all;">https://szjrhlxsghjwxapjnmvj.supabase.co</code></div>
+                <div><strong>Active Key:</strong> <code>sb_publishable_...</code> (Anon / Publishable)</div>
+                <div><strong>Row Level Security:</strong> <span class="badge badge-success">Enabled on All Tables</span></div>
+                <div><strong>Storage Bucket:</strong> <code>product-images</code></div>
+              </div>
+            </div>
+
+            <!-- Store Policies -->
+            <div class="table-card" style="padding: 24px;">
+              <h3 style="font-family: var(--font-serif); color: var(--coffee); margin-bottom: 16px;">Store Rules (Configured in DB)</h3>
+              <ul style="padding-left: 20px; font-size: 0.88rem; display: flex; flex-direction: column; gap: 8px;">
+                <li><strong>Delivery Fee:</strong> ₹30 (Client approved)</li>
+                <li><strong>Free Delivery Threshold:</strong> Orders above ₹499</li>
+                <li><strong>Takeaway Orders:</strong> Always FREE delivery</li>
+                <li><strong>Simple Club:</strong> ₹49/month • 5% off all orders</li>
+                <li><strong>Premium Club:</strong> ₹99/month • 10% off + FREE delivery</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- 1. Add / Edit Product Modal -->
+  <div class="modal-overlay" id="product-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="product-modal-title">Add New Product</h3>
+        <button type="button" class="modal-close" onclick="closeProductModal()">✕</button>
+      </div>
+      <form id="product-modal-form" class="modal-form" onsubmit="saveProduct(event)">
+        <div class="modal-body">
+          <input type="hidden" id="product-modal-id">
+          <input type="hidden" id="product-image-url">
+
+          <div class="form-group">
+            <label class="form-label" for="product-modal-name">Product Name *</label>
+            <input type="text" id="product-modal-name" class="form-input" placeholder="e.g. Café Hazelnut Mocha" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="product-modal-category">Category *</label>
+              <select id="product-modal-category" class="form-select" required>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+            <div class="form-group" style="display: flex; flex-direction: column; justify-content: flex-end;">
+              <label class="form-label">Availability</label>
+              <div class="toggle-wrap" style="height: 42px;">
+                <label class="toggle">
+                  <input type="checkbox" id="product-modal-available" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">In Stock &amp; Visible</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="product-modal-desc">Description</label>
+            <textarea id="product-modal-desc" class="form-textarea" placeholder="Tasting notes, roast level, or origin..."></textarea>
+          </div>
+
+          <!-- Product Image Upload -->
+          <div class="form-group">
+            <label class="form-label">Product Image</label>
+            <div class="image-upload-zone" id="image-drop-zone">
+              <input type="file" id="product-image-file" accept="image/jpeg,image/png,image/webp" onchange="handleImageSelect(event)">
+              <div class="upload-icon">📸</div>
+              <div class="upload-text">Click or drag image here to upload</div>
+              <div class="upload-hint">Supports JPEG, PNG, WebP (Max 5MB)</div>
+            </div>
+
+            <!-- Upload progress -->
+            <div class="upload-progress" id="upload-progress">
+              <div class="upload-progress-bar" id="upload-progress-bar"></div>
+            </div>
+
+            <!-- Preview -->
+            <div class="image-preview" id="product-preview-container" style="display: none;">
+              <img id="product-image-preview" src="" alt="Preview">
+              <button type="button" class="remove-image" onclick="removeSelectedImage()" title="Remove Image">✕</button>
+            </div>
+
+            <!-- Direct Image URL Input (Fallback / Quick Paste) -->
+            <div style="margin-top: 10px;">
+              <span style="font-size: 0.78rem; color: var(--gray-400);">Or enter image URL directly:</span>
+              <input type="url" id="product-image-url" class="form-input" placeholder="https://images.unsplash.com/..." style="font-size: 0.85rem; padding: 8px 12px; margin-top: 4px;">
+            </div>
+          </div>
+
+          <!-- Variants / Sizes Section -->
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label class="form-label" style="margin-bottom: 0;">Size / Flavor Options &amp; Prices *</label>
+            </div>
+
+            <!-- Quick Size / Flavor Presets -->
+            <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
+              <button type="button" class="btn btn-secondary btn-xs" onclick="applyVariantPreset('sml')">⚡ S / M / L Sizes</button>
+              <button type="button" class="btn btn-secondary btn-xs" onclick="applyVariantPreset('single')">⚡ Standard (Single Price)</button>
+              <button type="button" class="btn btn-secondary btn-xs" onclick="applyVariantPreset('muffin')">⚡ Choco / Blueberry</button>
+            </div>
+
+            <p style="font-size: 0.78rem; color: var(--gray-400); margin-bottom: 8px;">
+              Select a preset above or enter custom sizes/flavors below. For single-price snacks/desserts, use "Standard" or "Regular".
+            </p>
+            
+            <div class="variants-list" id="variants-container">
+              <!-- Injected dynamically -->
+            </div>
+
+            <button type="button" class="btn-add-variant" onclick="addVariantRow()">+ Add Another Size or Flavor</button>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="product-save-btn">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Add / Edit Category Modal -->
+  <div class="modal-overlay" id="category-modal">
+    <div class="modal" style="max-width: 460px;">
+      <div class="modal-header">
+        <h3 id="cat-modal-title">Add Category</h3>
+        <button type="button" class="modal-close" onclick="closeCategoryModal()">✕</button>
+      </div>
+      <form id="cat-modal-form" class="modal-form" onsubmit="saveCategory(event)">
+        <div class="modal-body">
+          <input type="hidden" id="cat-modal-id">
+
+          <div class="form-group">
+            <label class="form-label" for="cat-modal-name">Category Name *</label>
+            <input type="text" id="cat-modal-name" class="form-input" placeholder="e.g. Specialty Cold Brews" oninput="handleCategoryNameInput(this)" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="cat-modal-slug">URL Slug *</label>
+            <input type="text" id="cat-modal-slug" class="form-input" placeholder="e.g. specialty-cold-brews" required>
+            <span style="font-size: 0.72rem; color: var(--gray-400);">Used for filtering and category tabs</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="cat-modal-desc">Description</label>
+            <input type="text" id="cat-modal-desc" class="form-input" placeholder="Short description...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeCategoryModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="cat-save-btn">Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. View Order Details Modal -->
+  <div class="modal-overlay" id="order-detail-modal">
+    <div class="modal" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 id="order-detail-title">Order Details</h3>
+        <button type="button" class="modal-close" onclick="closeOrderDetailModal()">✕</button>
+      </div>
+      <div class="modal-body" id="order-detail-body">
+        <!-- Injected dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeOrderDetailModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Confirmation Dialog -->
+  <div class="confirm-overlay" id="confirm-dialog-overlay">
+    <div class="confirm-dialog">
+      <div class="confirm-icon">⚠️</div>
+      <h3 class="confirm-title" id="confirm-title">Are you sure?</h3>
+      <p class="confirm-msg" id="confirm-msg">This action cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn btn-secondary" onclick="closeConfirmDialog()">Cancel</button>
+        <button class="btn btn-danger" onclick="executeDeleteProduct()">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="admin-toast-container" id="admin-toast-container"></div>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase.js"></script>
+  <script src="js/admin-auth.js"></script>
+  <script src="js/admin-dashboard.js"></script>
+  <script src="js/admin-products.js"></script>
+  <script src="js/admin-categories.js"></script>
+  <script src="js/admin-orders.js"></script>
+  <script src="js/admin-subscriptions.js"></script>
+
+  <script>
+    // Global Toast Notification Helper
+    function showAdminToast(message, type = 'info') {
+      const container = document.getElementById('admin-toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `admin-toast ${type}`;
+      toast.innerHTML = `
+        <span>${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+        <span style="flex:1;">${escapeHtml(message)}</span>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 250);
+      }, 3500);
+    }
+
+    // SPA Section Navigation
+    function switchSection(sectionId, linkEl) {
+      // 1. Update navigation links
+      document.querySelectorAll('.sidebar-link').forEach(btn => btn.classList.remove('active'));
+      if (linkEl) {
+        linkEl.classList.add('active');
+      } else {
+        const target = document.querySelector(`.sidebar-link[data-target="${sectionId}"]`);
+        if (target) target.classList.add('active');
+      }
+
+      // 2. Hide all sections, show target
+      document.querySelectorAll('.section-panel').forEach(sec => sec.classList.remove('active'));
+      const activeSec = document.getElementById(`section-${sectionId}`);
+      if (activeSec) activeSec.classList.add('active');
+
+      // 3. Update titles
+      const titles = {
+        'dashboard': 'Dashboard Overview',
+        'products': 'Product Management',
+        'categories': 'Categories Management',
+        'orders': 'Customer Order Management',
+        'subscriptions': 'Subscription Management',
+        'settings': 'Store & System Settings'
+      };
+      document.getElementById('page-title').textContent = titles[sectionId] || 'Admin';
+
+      // 4. Close mobile sidebar if open
+      toggleMobileSidebar(false);
+
+      // 5. Trigger section data loader
+      if (sectionId === 'dashboard') loadDashboardMetrics();
+      if (sectionId === 'products') loadAdminProducts();
+      if (sectionId === 'categories') loadAdminCategories();
+      if (sectionId === 'orders') loadAdminOrders();
+      if (sectionId === 'subscriptions') loadAdminSubscriptions();
+    }
+
+    function toggleMobileSidebar(open) {
+      const sidebar = document.getElementById('admin-sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (open) {
+        sidebar.classList.add('mobile-open');
+        overlay.classList.add('show');
+      } else {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('show');
+      }
+    }
+
+    // Clock
+    function updateClock() {
+      const el = document.getElementById('clock-display');
+      if (el) {
+        const now = new Date();
+        el.textContent = now.toLocaleDateString('en-IN', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+    }
+
+    // App Initialization & Session Protection (Requirement 8)
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Enforce Admin Session and Role check against admin_profiles table
+      const auth = await requireAdminAuth();
+      if (!auth) return; // If unauthorized or no session, automatically redirected to login.html
+
+      // 2. Start clock
+      updateClock();
+      setInterval(updateClock, 30000);
+
+      // 3. Load initial dashboard metrics & products badge
+      await loadDashboardMetrics();
+      await loadAdminProducts();
+    });
+  </script>
+</body>
+</html>
+

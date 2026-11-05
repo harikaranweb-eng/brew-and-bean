@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Brew & Bean</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22><text y=%2226%22 font-size=%2226%22>☕</text></svg>">
+</head>
+<body class="login-page">
+
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="brand-icon">☕</div>
+      <h1>Brew &amp; Bean</h1>
+      <p>Store Owner &amp; Staff Administration Portal</p>
+    </div>
+
+    <!-- Alert Message Box -->
+    <div class="login-alert" id="login-alert"></div>
+
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label" for="login-email">Admin Email Address</label>
+        <div class="input-wrap">
+          <input
+            type="email"
+            id="login-email"
+            class="form-input"
+            placeholder="admin@brewandbean.in"
+            required
+            autocomplete="email"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="login-password">Password</label>
+        <div class="input-wrap">
+          <input
+            type="password"
+            id="login-password"
+            class="form-input"
+            placeholder="••••••••••••"
+            required
+            autocomplete="current-password"
+          >
+          <button
+            type="button"
+            class="pw-toggle"
+            id="toggle-password-btn"
+            title="Show/Hide Password"
+            onclick="togglePasswordVisibility()"
+          >👁️</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login" id="login-btn">
+        <span>Sign In to Admin Dashboard</span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p style="margin-bottom: 8px;">Authorized personnel only. Public registration is disabled.</p>
+      <a href="../index.html" style="color: var(--coffee); font-weight: 600;">← Back to Customer Store</a>
+    </div>
+  </div>
+
+  <!-- Supabase Official JS SDK CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Centralized Supabase Config & Security Auth Guard -->
+  <script src="../js/supabase.js"></script>
+  <script src="js/admin-auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Check if URL has error query parameter (e.g. from session guard redirect)
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('error') === 'unauthorized') {
+        showAlert('Access Denied: Your account does not have administrator privileges.', 'error');
+      }
+
+      // Check if already authenticated as admin; if so, redirect directly to dashboard.html
+      await redirectIfLoggedIn();
+    });
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('login-password');
+      const btn = document.getElementById('toggle-password-btn');
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+      }
+    }
+
+    function showAlert(msg, type = 'error') {
+      const alert = document.getElementById('login-alert');
+      alert.textContent = msg;
+      alert.className = `login-alert ${type}`;
+      alert.style.display = 'block';
+    }
+
+    function clearAlert() {
+      const alert = document.getElementById('login-alert');
+      alert.style.display = 'none';
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      clearAlert();
+
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const btn = document.getElementById('login-btn');
+
+      if (!email || !password) {
+        showAlert('Please enter both email and password.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>Verifying administrator credentials...</span>';
+
+      try {
+        // Authenticates with Supabase and verifies role = 'admin' in admin_profiles
+        await loginAdmin(email, password);
+        btn.innerHTML = '<span>Authorized! Redirecting to dashboard...</span>';
+        
+        // Requirement 5: Redirect authorized admins to /admin/dashboard.html
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        console.error('Login error:', err);
+        showAlert(err.message || 'Login failed. Please check your credentials.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<span>Sign In to Admin Dashboard</span>';
+      }
+    }
+  </script>
+</body>
+</html>

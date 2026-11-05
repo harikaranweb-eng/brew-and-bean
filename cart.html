@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart — Brew & Bean</title>
+  <meta name="description" content="Review your coffee selections, apply coupons, and checkout without registration.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar" id="main-navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">☕</div>
+        Brew & Bean
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="menu.html">Menu</a>
+        <a href="subscription.html">Subscription</a>
+        <a href="track-order.html">Track Order</a>
+      </div>
+      <div class="nav-actions">
+        <a href="track-order.html" class="nav-icon-btn" title="Track Order">🚚</a>
+        <a href="cart.html" class="nav-icon-btn active" title="Cart" style="position:relative">
+          🛒
+          <span class="cart-badge" style="display:none">0</span>
+        </a>
+        <div class="hamburger" id="hamburger">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="index.html">🏠 Home</a>
+    <a href="menu.html">☕ Menu</a>
+    <a href="subscription.html">⭐ Subscription</a>
+    <a href="track-order.html">🚚 Track Order</a>
+    <a href="cart.html" class="active">🛒 Cart</a>
+  </div>
+
+  <!-- ================= PAGE HERO ================= -->
+  <header class="page-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>/</span>
+        <span>Cart</span>
+      </div>
+      <h1>Your Coffee Cart</h1>
+      <p>Guest shopping enabled. Review your selected roasts and proceed directly to checkout without an account.</p>
+    </div>
+  </header>
+
+  <!-- ================= CART MAIN ================= -->
+  <main class="section">
+    <div class="container">
+      <div class="cart-layout" id="cart-layout-container">
+        
+        <!-- Left: Cart Items Table -->
+        <div id="cart-left-col">
+          <div class="cart-table-header" id="cart-header">
+            <span>Product</span>
+            <span>Price</span>
+            <span>Quantity</span>
+            <span>Subtotal</span>
+            <span></span>
+          </div>
+          <div id="cart-items-list">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+
+        <!-- Right: Order Summary Sidebar -->
+        <div class="cart-summary" id="cart-summary-card">
+          <h3>Order Summary</h3>
+
+          <!-- Order Type Selector -->
+          <div style="margin-bottom: 16px;">
+            <div class="option-label" style="margin-bottom: 8px;">Order Type:</div>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="pill active" id="btn-type-delivery" style="flex:1; justify-content:center;" onclick="setOrderType('Home Delivery')">
+                🛵 Delivery
+              </button>
+              <button type="button" class="pill" id="btn-type-takeaway" style="flex:1; justify-content:center;" onclick="setOrderType('Takeaway')">
+                🛍️ Takeaway
+              </button>
+            </div>
+          </div>
+
+          <div class="summary-row">
+            <span class="label">Items Subtotal</span>
+            <span class="value" id="summary-subtotal">₹0</span>
+          </div>
+          <div class="summary-row" id="discount-row" style="display:none;">
+            <span class="label">Coupon Discount (<span id="discount-code-label">BEAN20</span>)</span>
+            <span class="value discount" id="summary-discount">-₹0</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Estimated GST (5%)</span>
+            <span class="value" id="summary-tax">₹0</span>
+          </div>
+          <div class="summary-row">
+            <span class="label">Delivery Fee</span>
+            <span class="value" id="summary-delivery">FREE</span>
+          </div>
+
+          <!-- Coupon Input -->
+          <div class="coupon-input">
+            <input type="text" id="coupon-code-input" placeholder="Promo code (try BEAN20)" style="text-transform: uppercase;">
+            <button class="btn btn-secondary" onclick="applyCoupon()">Apply</button>
+          </div>
+          <div id="coupon-msg" style="font-size: 0.82rem; margin-top: -8px; margin-bottom: 12px; display: none;"></div>
+
+          <div class="summary-row total">
+            <span>Grand Total</span>
+            <span id="summary-total">₹0</span>
+          </div>
+
+          <div class="cart-summary-actions">
+            <a href="checkout.html" class="btn btn-primary btn-full btn-lg" id="checkout-btn">
+              Guest Checkout →
+            </a>
+            <a href="menu.html" class="btn btn-secondary btn-full">
+              ← Continue Shopping
+            </a>
+          </div>
+
+          <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--gray-200); font-size: 0.8rem; color: var(--gray-400); text-align: center; display: flex; flex-direction: column; gap: 8px;">
+            <span>🔒 Secure Supabase Guest Checkout</span>
+            <span>⚡ 30-Min Fresh Doorstep Delivery</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <div class="logo-icon">☕</div>
+            Brew & Bean
+          </div>
+          <p>Crafting extraordinary coffee experiences since 2018. Every cup is a celebration of passion, origin, and perfection.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="index.html">Home</a>
+          <a href="menu.html">Full Menu</a>
+          <a href="subscription.html">Subscriptions</a>
+          <a href="track-order.html">Track Order</a>
+        </div>
+        <div class="footer-col">
+          <h4>Need Assistance?</h4>
+          <a href="#">📍 42 MG Road, Bangalore</a>
+          <a href="tel:+918888888888">📞 +91 88888 88888</a>
+          <a href="mailto:hello@brewandbean.in">✉️ hello@brewandbean.in</a>
+        </div>
+        <div class="footer-col">
+          <h4>Hours</h4>
+          <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Monday to Sunday:<br>7:00 AM – 11:00 PM</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 Brew & Bean. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Supabase JS SDK via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- App Scripts -->
+  <script src="js/supabase.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/customer-auth.js"></script>
+  <script>
+    let appliedDiscount = 0;
+    let activePromo = '';
+    let selectedOrderType = 'Home Delivery';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedPromo = localStorage.getItem('bb_promo');
+      if (savedPromo === 'BEAN20') {
+        appliedDiscount = 0.20;
+        activePromo = 'BEAN20';
+      }
+      renderCartView();
+    });
+
+    function setOrderType(type) {
+      selectedOrderType = type;
+      document.getElementById('btn-type-delivery').classList.toggle('active', type === 'Home Delivery');
+      document.getElementById('btn-type-takeaway').classList.toggle('active', type === 'Takeaway');
+      sessionStorage.setItem('bb_order_type', type);
+      updateSummaryView();
+    }
+
+    function renderCartView() {
+      const cart = getCart();
+      const itemsList = document.getElementById('cart-items-list');
+      const cartHeader = document.getElementById('cart-header');
+      const summaryCard = document.getElementById('cart-summary-card');
+
+      if (!itemsList) return;
+
+      if (!cart || cart.length === 0) {
+        if (cartHeader) cartHeader.style.display = 'none';
+        if (summaryCard) summaryCard.style.display = 'none';
+        itemsList.innerHTML = `
+          <div class="empty-cart">
+            <div class="empty-cart-icon">☕</div>
+            <h2>Your Coffee Cart is Empty</h2>
+            <p>You haven't added any of our delicious handcrafted brews yet. Browse our selection and pick your favorite!</p>
+            <a href="menu.html" class="btn btn-primary btn-lg">Browse Menu</a>
+          </div>
+        `;
+        return;
+      }
+
+      if (cartHeader) cartHeader.style.display = 'grid';
+      if (summaryCard) summaryCard.style.display = 'block';
+
+      itemsList.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <div class="cart-product-info">
+            <img src="${item.image}" alt="${item.name}" class="cart-product-img">
+            <div>
+              <div class="cart-product-name">${item.name}</div>
+              <div class="cart-product-size">Portion / Size: <strong>${item.size}</strong> • ${item.category || 'Artisanal'}</div>
+            </div>
+          </div>
+          <div class="cart-price">₹${item.price}</div>
+          <div class="cart-qty-ctrl">
+            <button class="qty-btn" onclick="handleQty('${item.key}', -1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="handleQty('${item.key}', 1)">+</button>
+          </div>
+          <div class="cart-price">₹${item.price * item.qty}</div>
+          <button class="cart-remove-btn" title="Remove Item" onclick="handleRemoveItem('${item.key}')">🗑️</button>
+        </div>
+      `).join('');
+
+      updateSummaryView();
+    }
+
+    function handleQty(key, delta) {
+      updateCartItemQty(key, delta);
+      renderCartView();
+    }
+
+    function handleRemoveItem(key) {
+      removeFromCart(key);
+      showToast('Item removed from cart', 'info');
+      renderCartView();
+    }
+
+    function applyCoupon() {
+      const input = document.getElementById('coupon-code-input');
+      const msgEl = document.getElementById('coupon-msg');
+      const code = (input.value || '').trim().toUpperCase();
+
+      if (code === 'BEAN20') {
+        appliedDiscount = 0.20;
+        activePromo = 'BEAN20';
+        localStorage.setItem('bb_promo', 'BEAN20');
+        msgEl.textContent = '🎉 Code BEAN20 applied! 20% discount granted.';
+        msgEl.style.color = 'var(--success)';
+        msgEl.style.display = 'block';
+        showToast('Promo code BEAN20 applied!', 'success');
+      } else if (code === 'BREW10') {
+        appliedDiscount = 0.10;
+        activePromo = 'BREW10';
+        localStorage.setItem('bb_promo', 'BREW10');
+        msgEl.textContent = '🎉 Code BREW10 applied! 10% discount granted.';
+        msgEl.style.color = 'var(--success)';
+        msgEl.style.display = 'block';
+        showToast('Promo code BREW10 applied!', 'success');
+      } else {
+        msgEl.textContent = '❌ Invalid coupon code. Try BEAN20';
+        msgEl.style.color = 'var(--error)';
+        msgEl.style.display = 'block';
+        showToast('Invalid promo code', 'error');
+      }
+      updateSummaryView();
+    }
+
+    function updateSummaryView() {
+      const subtotal = getCartTotal();
+      const discountAmount = Math.round(subtotal * appliedDiscount);
+      const discountedSubtotal = subtotal - discountAmount;
+      const tax = Math.round(discountedSubtotal * 0.05);
+      
+      // Approved client delivery fee: ₹30 per order, Free above ₹499 or Takeaway
+      const delivery = calculateDeliveryFee(discountedSubtotal, selectedOrderType);
+      const total = discountedSubtotal + tax + delivery;
+
+      document.getElementById('summary-subtotal').textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+
+      const discRow = document.getElementById('discount-row');
+      if (appliedDiscount > 0) {
+        discRow.style.display = 'flex';
+        document.getElementById('discount-code-label').textContent = activePromo;
+        document.getElementById('summary-discount').textContent = `-₹${discountAmount.toLocaleString('en-IN')}`;
+      } else {
+        discRow.style.display = 'none';
+      }
+
+      document.getElementById('summary-tax').textContent = `₹${tax.toLocaleString('en-IN')}`;
+      document.getElementById('summary-delivery').textContent = delivery === 0 ? 'FREE' : `₹${delivery}`;
+      document.getElementById('summary-total').textContent = `₹${total.toLocaleString('en-IN')}`;
+
+      // Save summary in session for checkout
+      sessionStorage.setItem('bb_checkout_totals', JSON.stringify({
+        subtotal,
+        discountAmount,
+        discountCode: activePromo,
+        orderType: selectedOrderType,
+        tax,
+        delivery,
+        total
+      }));
+    }
+  </script>
+</body>
+</html>
+

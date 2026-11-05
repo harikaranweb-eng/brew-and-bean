@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brew & Bean — Artisanal Coffee Roasters</title>
+  <meta name="description" content="Handcrafted brews from sustainably sourced single-origin beans, roasted to perfection and delivered fresh.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar" id="main-navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">☕</div>
+        Brew & Bean
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="menu.html">Menu</a>
+        <a href="subscription.html">Subscription</a>
+        <a href="track-order.html">Track Order</a>
+      </div>
+      <div class="nav-actions">
+        <a href="track-order.html" class="nav-icon-btn" title="Track Order">🚚</a>
+        <a href="cart.html" class="nav-icon-btn" title="Cart" style="position:relative">
+          🛒
+          <span class="cart-badge" style="display:none">0</span>
+        </a>
+        <div class="hamburger" id="hamburger">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation Drawer -->
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="index.html" class="active">🏠 Home</a>
+    <a href="menu.html">☕ Menu</a>
+    <a href="subscription.html">⭐ Subscription</a>
+    <a href="track-order.html">🚚 Track Order</a>
+    <a href="cart.html">🛒 Cart</a>
+  </div>
+
+  <!-- ================= HERO ================= -->
+  <header class="hero">
+    <div class="hero-bg">
+      <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1600&q=80" alt="Artisan Coffee Roasting">
+    </div>
+    <div class="container hero-content">
+      <div class="hero-tag">Artisanal Coffee Roasters</div>
+      <h1>Awaken Your Senses With <span>Every Pour</span></h1>
+      <p>Handcrafted brews from sustainably sourced single-origin beans, roasted in small batches to perfection and delivered to your doorstep. No account needed to order.</p>
+      <div class="hero-actions">
+        <a href="menu.html" class="btn btn-primary btn-lg">Explore Menu</a>
+        <a href="subscription.html" class="btn btn-ghost btn-lg">Join Subscription</a>
+      </div>
+    </div>
+
+    <!-- Hero Stats -->
+    <div class="hero-stats">
+      <div class="container">
+        <div class="stat-item">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Arabica Specialty Beans</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">25+</div>
+          <div class="stat-label">Unique Artisanal Blends</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">50k+</div>
+          <div class="stat-label">Happy Coffee Lovers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">4.9 ★</div>
+          <div class="stat-label">Customer Satisfaction</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </header>
+
+  <!-- ================= MARQUEE TICKER ================= -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <div class="marquee-item"><span class="dot">✦</span> Single-Origin Specialty Beans</div>
+      <div class="marquee-item"><span class="dot">✦</span> Roasted Fresh Weekly</div>
+      <div class="marquee-item"><span class="dot">✦</span> 30-Minute Fast Delivery</div>
+      <div class="marquee-item"><span class="dot">✦</span> Guest Checkout (No Login Required)</div>
+      <div class="marquee-item"><span class="dot">✦</span> 100% Eco-Friendly Packaging</div>
+      <div class="marquee-item"><span class="dot">✦</span> Free Shipping On Orders Above ₹499</div>
+      <div class="marquee-item"><span class="dot">✦</span> Single-Origin Specialty Beans</div>
+      <div class="marquee-item"><span class="dot">✦</span> Roasted Fresh Weekly</div>
+      <div class="marquee-item"><span class="dot">✦</span> 30-Minute Fast Delivery</div>
+      <div class="marquee-item"><span class="dot">✦</span> Guest Checkout (No Login Required)</div>
+    </div>
+  </div>
+
+  <!-- ================= FEATURED CATEGORIES ================= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">Discover Our Roasts</span>
+        <h2>Curated Collections</h2>
+        <p>From intense dark roasts to silky chilled blends, explore our handcrafted categories made for every coffee moment.</p>
+      </div>
+
+      <div class="categories-grid">
+        <div class="category-card reveal reveal-delay-1" onclick="window.location.href='menu.html?cat=hot-coffee'">
+          <img src="https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=600&q=80" alt="Hot Coffee">
+          <div class="category-card-overlay">
+            <h3>Hot Coffee</h3>
+            <span>Espresso, Cappuccino, Lattes • 7 Items</span>
+          </div>
+        </div>
+
+        <div class="category-card reveal reveal-delay-2" onclick="window.location.href='menu.html?cat=cold-coffee'">
+          <img src="https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=600&q=80" alt="Cold Coffee">
+          <div class="category-card-overlay">
+            <h3>Cold Coffee</h3>
+            <span>Iced Lattes & Blended Frappes • 5 Items</span>
+          </div>
+        </div>
+
+        <div class="category-card reveal reveal-delay-3" onclick="window.location.href='menu.html?cat=tea-refreshments'">
+          <img src="https://images.unsplash.com/photo-1561047029-3000c68339ca?w=600&q=80" alt="Tea & Refreshments">
+          <div class="category-card-overlay">
+            <h3>Tea & Refreshments</h3>
+            <span>Masala Chai & Hot Chocolate • 5 Items</span>
+          </div>
+        </div>
+
+        <div class="category-card reveal reveal-delay-4" onclick="window.location.href='menu.html?cat=snacks'">
+          <img src="https://images.unsplash.com/photo-1528736235302-52922df5c122?w=600&q=80" alt="Snacks & Desserts">
+          <div class="category-card-overlay">
+            <h3>Snacks & Desserts</h3>
+            <span>Artisanal Sandwiches & Bakery • 14 Items</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= POPULAR PRODUCTS ================= -->
+  <section class="section" style="background: var(--white);">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">Our Bestsellers</span>
+        <h2>Signature Brews Loved by Thousands</h2>
+        <p>Hand-crafted with meticulous detail, these creations represent the pinnacle of our coffee craft.</p>
+      </div>
+
+      <div class="products-grid" id="home-products-grid">
+        <!-- Rendered dynamically from Supabase database -->
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--gray-400);">
+          ☕ Loading freshly roasted coffees from Supabase...
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 48px;" class="reveal">
+        <a href="menu.html" class="btn btn-secondary btn-lg">Explore Full Menu (31 Items) →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHY CHOOSE US ================= -->
+  <section class="section why-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">The Brew & Bean Promise</span>
+        <h2>Why Coffee Lovers Choose Us</h2>
+        <p>We believe every sip should be an elevated sensory ritual. Here is how we guarantee perfection.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon">🌱</div>
+          <h4>Single-Origin Estates</h4>
+          <p>Direct-trade partnership with award-winning estates in Chikmagalur and Coorg, ensuring unmatched quality and fair wages.</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon">🔥</div>
+          <h4>Small-Batch Roasting</h4>
+          <p>Roasted in micro-batches twice every week. Beans are packed within hours of roasting to preserve volatile aromatic oils.</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-3">
+          <div class="feature-icon">⚡</div>
+          <h4>Express 30-Min Delivery</h4>
+          <p>Piping hot espressos or chilled cold brews delivered in specialized thermal carriers right to your doorstep.</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-4">
+          <div class="feature-icon">🔒</div>
+          <h4>Fast Guest Checkout</h4>
+          <p>Order in under 60 seconds without creating an account. Simple tracking with your mobile number anytime.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LIMITED TIME OFFER ================= -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="offer-banner reveal">
+        <div>
+          <span class="offer-tag">Limited Time Deal</span>
+          <h2>Get Flat 20% Off Your First Coffee Order</h2>
+          <p>Use code <strong style="color:var(--white); text-decoration: underline;">BEAN20</strong> during checkout. Includes all espresso roasts, cold brews, and seasonal specials.</p>
+          <a href="menu.html" class="btn btn-caramel btn-lg">Order With Discount</a>
+        </div>
+        <div>
+          <div style="color: rgba(255,255,255,0.7); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.1em; text-align: center;">Offer Ends In:</div>
+          <div class="offer-timer">
+            <div class="timer-unit">
+              <span class="timer-num" id="timer-h">08</span>
+              <span class="timer-label">Hours</span>
+            </div>
+            <div class="timer-unit">
+              <span class="timer-num" id="timer-m">45</span>
+              <span class="timer-label">Mins</span>
+            </div>
+            <div class="timer-unit">
+              <span class="timer-num" id="timer-s">19</span>
+              <span class="timer-label">Secs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SUBSCRIPTION BANNER ================= -->
+  <section class="section" style="padding-top: 0;">
+    <div class="container">
+      <div class="sub-banner reveal">
+        <span class="tag" style="background: rgba(92,56,37,0.1); color: var(--coffee); padding: 6px 16px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; display: inline-block; margin-bottom: 16px;">Coffee Subscription Club</span>
+        <h2>Simple (₹49) or Premium (₹99) Plans</h2>
+        <p>Subscribe in seconds without account creation. Enjoy exclusive member discounts, priority support, and special monthly rewards.</p>
+        <div class="sub-perks">
+          <div class="sub-perk"><span class="icon">✓</span> Exclusive member coffee discounts</div>
+          <div class="sub-perk"><span class="icon">✓</span> Special monthly roaster offers</div>
+          <div class="sub-perk"><span class="icon">✓</span> 10% off eligible orders (Premium)</div>
+          <div class="sub-perk"><span class="icon">✓</span> Easy self-service cancellation anytime</div>
+        </div>
+        <a href="subscription.html" class="btn btn-primary btn-lg">Explore Subscription Plans →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TESTIMONIALS ================= -->
+  <section class="section" style="background: var(--white);">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">Community Love</span>
+        <h2>What Coffee Lovers Say</h2>
+        <p>Join over 50,000 coffee enthusiasts who start their day the Brew & Bean way.</p>
+      </div>
+
+      <div class="reviews-grid" id="home-reviews-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= NEWSLETTER ================= -->
+  <section class="section newsletter-section">
+    <div class="container">
+      <div class="reveal">
+        <span style="display:inline-block; font-size:2.5rem; margin-bottom:12px;">📬</span>
+        <h2>Get 15% Off Your Next Sip</h2>
+        <p>Subscribe to our weekly dispatch for barista brewing guides, secret roast drops, and exclusive discounts.</p>
+        <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+          <input type="email" class="form-input" id="news-email" placeholder="Enter your email address" required>
+          <button type="submit" class="btn btn-caramel">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <div class="logo-icon">☕</div>
+            Brew & Bean
+          </div>
+          <p>Crafting extraordinary coffee experiences since 2018. Every cup is a celebration of passion, origin, and perfection.</p>
+          <div class="footer-social">
+            <a href="#" class="social-btn" title="Instagram">📸</a>
+            <a href="#" class="social-btn" title="Twitter">🐦</a>
+            <a href="#" class="social-btn" title="Facebook">👍</a>
+            <a href="#" class="social-btn" title="YouTube">▶️</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="index.html">Home</a>
+          <a href="menu.html">Artisanal Menu</a>
+          <a href="subscription.html">Subscription Plans</a>
+          <a href="track-order.html">Track Order</a>
+          <a href="cart.html">Shopping Cart</a>
+        </div>
+        <div class="footer-col">
+          <h4>Our Roasts & Food</h4>
+          <a href="menu.html?cat=hot-coffee">Hot Coffee</a>
+          <a href="menu.html?cat=cold-coffee">Cold Coffee</a>
+          <a href="menu.html?cat=tea-refreshments">Tea & Refreshments</a>
+          <a href="menu.html?cat=snacks">Snacks & Sandwiches</a>
+          <a href="menu.html?cat=desserts">Bakery & Desserts</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact & Hours</h4>
+          <a href="#">📍 42 MG Road, Bangalore, KA</a>
+          <a href="tel:+918888888888">📞 +91 88888 88888</a>
+          <a href="mailto:hello@brewandbean.in">✉️ hello@brewandbean.in</a>
+          <a href="#">🕐 Mon–Sun: 7:00 AM – 11:00 PM</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 Brew & Bean Artisanal Roasters. All rights reserved. • <a href="admin/login.html" style="color: inherit; opacity: 0.6;">Admin Portal</a></span>
+        <span>Crafted with ☕ & ❤️ in Bangalore, India</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Supabase Official JS SDK via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- App Scripts -->
+  <script src="js/supabase.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/customer-auth.js"></script>
+  <script>
+    // Load and render top 8 featured products dynamically from Supabase
+    document.addEventListener('DOMContentLoaded', async () => {
+      const grid = document.getElementById('home-products-grid');
+      if (grid) {
+        try {
+          const prods = await fetchProducts();
+          const topProducts = prods.slice(0, 8);
+          grid.innerHTML = topProducts.map(p => buildProductCard(p)).join('');
+          initScrollReveal();
+        } catch (e) {
+          console.error('Home products render error:', e);
+        }
+      }
+
+      // Render 3 reviews
+      const revGrid = document.getElementById('home-reviews-grid');
+      if (revGrid && typeof REVIEWS !== 'undefined') {
+        revGrid.innerHTML = REVIEWS.slice(0, 3).map(r => `
+          <div class="review-card reveal">
+            <div class="review-quote">“</div>
+            <p class="review-text">${r.text}</p>
+            <div style="margin: 16px 0 12px;">
+              ${renderStars(r.rating)}
+            </div>
+            <div class="review-header" style="margin-bottom:0;">
+              <div class="reviewer-avatar">${r.initials}</div>
+              <div class="reviewer-info">
+                <h5>${r.name}</h5>
+                <span>${r.location} • Verified Buyer</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+    });
+
+    // Newsletter submit
+    function handleNewsletter(e) {
+      e.preventDefault();
+      const input = document.getElementById('news-email');
+      if (input && input.value) {
+        showToast('Thank you for subscribing! Check your inbox for 15% off coupon.', 'success');
+        input.value = '';
+      }
+    }
+  </script>
+</body>
+</html>

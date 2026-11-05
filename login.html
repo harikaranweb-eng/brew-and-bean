@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Sign In — Brew &amp; Bean</title>
+  <meta name="description" content="Sign in to your Brew & Bean account to track orders and manage your coffee preferences.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body style="background: var(--cream);">
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar" id="main-navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">☕</div>
+        Brew &amp; Bean
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="menu.html">Menu</a>
+        <a href="subscription.html">Subscription</a>
+        <a href="track-order.html">Track Order</a>
+      </div>
+      <div class="nav-actions">
+        <a href="track-order.html" class="nav-icon-btn" title="Track Order">🚚</a>
+        <a href="cart.html" class="nav-icon-btn" title="Cart" style="position:relative">
+          🛒
+          <span class="cart-badge" style="display:none">0</span>
+        </a>
+        <div class="hamburger" id="hamburger">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="index.html">🏠 Home</a>
+    <a href="menu.html">☕ Menu</a>
+    <a href="subscription.html">⭐ Subscription</a>
+    <a href="track-order.html">🚚 Track Order</a>
+    <a href="cart.html">🛒 Cart</a>
+  </div>
+
+  <!-- ================= LOGIN CARD ================= -->
+  <main class="section" style="padding-top: calc(var(--nav-height) + 40px); min-height: 85vh; display: flex; align-items: center;">
+    <div class="container" style="max-width: 460px;">
+      
+      <div class="checkout-card" style="padding: 40px 32px; box-shadow: var(--shadow-lg); border-radius: var(--radius-xl); background: var(--white);">
+        
+        <div style="text-align: center; margin-bottom: 28px;">
+          <div style="font-size: 2.2rem; margin-bottom: 8px;">☕</div>
+          <h1 style="font-size: 1.8rem; margin-bottom: 6px;">Customer Sign In</h1>
+          <p style="color: var(--gray-600); font-size: 0.9rem;">
+            Access your orders, saved details, and membership discounts.
+          </p>
+        </div>
+
+        <!-- Alert Notification -->
+        <div id="login-alert" style="display: none; padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.88rem; margin-bottom: 20px;"></div>
+
+        <form id="customer-login-form" onsubmit="handleCustomerLogin(event)">
+          
+          <div class="form-group" style="margin-bottom: 18px;">
+            <label class="form-label" for="cust-login-email">Email Address</label>
+            <input type="email" id="cust-login-email" class="form-input" placeholder="name@example.com" required autocomplete="email">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+              <label class="form-label" for="cust-login-password" style="margin-bottom: 0;">Password</label>
+              <a href="forgot-password.html" style="font-size: 0.8rem; color: var(--caramel); font-weight: 600;">Forgot Password?</a>
+            </div>
+            <div style="position: relative;">
+              <input type="password" id="cust-login-password" class="form-input" placeholder="••••••••••••" required autocomplete="current-password">
+              <button type="button" class="pw-toggle" onclick="togglePassword('cust-login-password', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--gray-400);">👁️</button>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-login-submit" class="btn btn-primary btn-full btn-lg" style="margin-top: 18px; margin-bottom: 20px;">
+            Sign In
+          </button>
+        </form>
+
+        <div style="text-align: center; font-size: 0.88rem; color: var(--gray-600); border-top: 1px solid var(--gray-200); padding-top: 20px;">
+          New to Brew &amp; Bean? <a href="register.html" style="color: var(--coffee); font-weight: 700; text-decoration: underline;">Create an account</a>
+        </div>
+
+        <div style="text-align: center; font-size: 0.8rem; color: var(--gray-400); margin-top: 14px;">
+          Don't want to sign in? <a href="menu.html" style="color: var(--caramel); font-weight: 600;">Continue as Guest</a>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/customer-auth.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Check if already signed in
+      const cust = await getCurrentCustomer();
+      if (cust) {
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect') || 'account.html';
+        window.location.href = redirect;
+      }
+    });
+
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+      }
+    }
+
+    function showLoginAlert(msg, type = 'error') {
+      const el = document.getElementById('login-alert');
+      el.textContent = msg;
+      el.style.display = 'block';
+      if (type === 'error') {
+        el.style.background = '#fdecea';
+        el.style.color = '#c0392b';
+        el.style.border = '1px solid #fadbd8';
+      } else {
+        el.style.background = '#edf7f1';
+        el.style.color = '#2d8a4e';
+        el.style.border = '1px solid #d4efdf';
+      }
+    }
+
+    async function handleCustomerLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('cust-login-email').value.trim();
+      const password = document.getElementById('cust-login-password').value;
+      const btn = document.getElementById('btn-login-submit');
+
+      if (!email || !password) {
+        showLoginAlert('Please enter both email and password.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '☕ Signing In...';
+
+      try {
+        await customerLogin(email, password);
+        showLoginAlert('Signed in successfully! Redirecting...', 'success');
+        
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect') || 'index.html';
+        setTimeout(() => {
+          window.location.href = redirect;
+        }, 800);
+      } catch (err) {
+        console.error('Login error:', err);
+        showLoginAlert(err.message || 'Invalid email or password.');
+        btn.disabled = false;
+        btn.innerHTML = 'Sign In';
+      }
+    }
+  </script>
+</body>
+</html>
+

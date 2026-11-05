@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Registration — Brew &amp; Bean</title>
+  <meta name="description" content="Create a Brew & Bean account to track your orders, save delivery addresses, and enjoy artisanal coffee rewards.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body style="background: var(--cream);">
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar" id="main-navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">☕</div>
+        Brew &amp; Bean
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="menu.html">Menu</a>
+        <a href="subscription.html">Subscription</a>
+        <a href="track-order.html">Track Order</a>
+      </div>
+      <div class="nav-actions">
+        <a href="track-order.html" class="nav-icon-btn" title="Track Order">🚚</a>
+        <a href="cart.html" class="nav-icon-btn" title="Cart" style="position:relative">
+          🛒
+          <span class="cart-badge" style="display:none">0</span>
+        </a>
+        <div class="hamburger" id="hamburger">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="index.html">🏠 Home</a>
+    <a href="menu.html">☕ Menu</a>
+    <a href="subscription.html">⭐ Subscription</a>
+    <a href="track-order.html">🚚 Track Order</a>
+    <a href="cart.html">🛒 Cart</a>
+  </div>
+
+  <!-- ================= REGISTRATION CARD ================= -->
+  <main class="section" style="padding-top: calc(var(--nav-height) + 40px); min-height: 85vh; display: flex; align-items: center;">
+    <div class="container" style="max-width: 500px;">
+      
+      <div class="checkout-card" style="padding: 40px 32px; box-shadow: var(--shadow-lg); border-radius: var(--radius-xl); background: var(--white);">
+        
+        <div style="text-align: center; margin-bottom: 28px;">
+          <div style="font-size: 2.2rem; margin-bottom: 8px;">✨</div>
+          <h1 style="font-size: 1.8rem; margin-bottom: 6px;">Create Your Account</h1>
+          <p style="color: var(--gray-600); font-size: 0.9rem;">
+            Join Brew &amp; Bean to view order history and personalized coffee perks.
+          </p>
+        </div>
+
+        <!-- Alert Notification -->
+        <div id="reg-alert" style="display: none; padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.88rem; margin-bottom: 20px;"></div>
+
+        <form id="customer-register-form" onsubmit="handleCustomerRegister(event)">
+          
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" for="reg-fullname">Full Name *</label>
+            <input type="text" id="reg-fullname" class="form-input" placeholder="e.g. Ananya Sharma" required autocomplete="name">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" for="reg-email">Email Address *</label>
+            <input type="email" id="reg-email" class="form-input" placeholder="name@example.com" required autocomplete="email">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" for="reg-phone">Mobile Number *</label>
+            <input type="tel" id="reg-phone" class="form-input" placeholder="10-digit mobile number" required autocomplete="tel">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" for="reg-password">Password (Minimum 6 characters) *</label>
+            <div style="position: relative;">
+              <input type="password" id="reg-password" class="form-input" placeholder="••••••••••••" required minlength="6" autocomplete="new-password">
+              <button type="button" class="pw-toggle" onclick="togglePassword('reg-password', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--gray-400);">👁️</button>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 24px;">
+            <label class="form-label" for="reg-confirm-password">Confirm Password *</label>
+            <div style="position: relative;">
+              <input type="password" id="reg-confirm-password" class="form-input" placeholder="••••••••••••" required minlength="6" autocomplete="new-password">
+              <button type="button" class="pw-toggle" onclick="togglePassword('reg-confirm-password', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--gray-400);">👁️</button>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-register" class="btn btn-primary btn-full btn-lg" style="margin-bottom: 20px;">
+            Create Customer Account
+          </button>
+        </form>
+
+        <div style="text-align: center; font-size: 0.88rem; color: var(--gray-600); border-top: 1px solid var(--gray-200); padding-top: 20px;">
+          Already have an account? <a href="login.html" style="color: var(--coffee); font-weight: 700; text-decoration: underline;">Sign In here</a>
+        </div>
+
+        <div style="text-align: center; font-size: 0.8rem; color: var(--gray-400); margin-top: 14px;">
+          Want to shop without registering? <a href="menu.html" style="color: var(--caramel); font-weight: 600;">Browse Menu &amp; Guest Checkout</a>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/customer-auth.js"></script>
+
+  <script>
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+      }
+    }
+
+    function showRegAlert(msg, type = 'error') {
+      const el = document.getElementById('reg-alert');
+      el.textContent = msg;
+      el.style.display = 'block';
+      if (type === 'error') {
+        el.style.background = '#fdecea';
+        el.style.color = '#c0392b';
+        el.style.border = '1px solid #fadbd8';
+      } else {
+        el.style.background = '#edf7f1';
+        el.style.color = '#2d8a4e';
+        el.style.border = '1px solid #d4efdf';
+      }
+    }
+
+    async function handleCustomerRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-fullname').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const phone = document.getElementById('reg-phone').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const confirmPassword = document.getElementById('reg-confirm-password').value;
+      const btn = document.getElementById('btn-register');
+
+      if (!name || !email || !phone || !password) {
+        showRegAlert('Please fill out all required fields.');
+        return;
+      }
+
+      if (phone.replace(/\D/g, '').length < 10) {
+        showRegAlert('Please enter a valid 10-digit mobile number.');
+        return;
+      }
+
+      if (password.length < 6) {
+        showRegAlert('Password must be at least 6 characters long.');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showRegAlert('Passwords do not match. Please re-check.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '☕ Creating Your Account...';
+
+      try {
+        await customerRegister(name, email, phone, password);
+        showRegAlert('Account created successfully! Redirecting...', 'success');
+        setTimeout(() => {
+          window.location.href = 'account.html';
+        }, 1200);
+      } catch (err) {
+        console.error('Registration error:', err);
+        showRegAlert(err.message || 'Registration failed. Please try again.');
+        btn.disabled = false;
+        btn.innerHTML = 'Create Customer Account';
+      }
+    }
+  </script>
+</body>
+</html>
+

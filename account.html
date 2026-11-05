@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account — Brew &amp; Bean</title>
+  <meta name="description" content="Manage your Brew & Bean customer profile, view past orders, and track active deliveries.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <style>
+    .order-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+    .status-pending { background: #fff8e1; color: #b78103; border: 1px solid #ffe082; }
+    .status-confirmed { background: #e3f2fd; color: #1976d2; border: 1px solid #90caf9; }
+    .status-preparing { background: #f3e5f5; color: #7b1fa2; border: 1px solid #ce93d8; }
+    .status-out_for_delivery { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .status-delivered { background: #edf7f1; color: #2d8a4e; border: 1px solid #c8e6c9; }
+    .status-cancelled { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+
+    /* Modal styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+    .modal-card {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      max-width: 650px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 32px;
+      box-shadow: var(--shadow-xl);
+      position: relative;
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: var(--gray-100);
+      border: none;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--dark);
+      transition: var(--transition-fast);
+    }
+    .modal-close-btn:hover { background: var(--gray-200); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body style="background: var(--cream);">
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar" id="main-navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">☕</div>
+        Brew &amp; Bean
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="menu.html">Menu</a>
+        <a href="subscription.html">Subscription</a>
+        <a href="track-order.html">Track Order</a>
+      </div>
+      <div class="nav-actions">
+        <a href="track-order.html" class="nav-icon-btn" title="Track Order">🚚</a>
+        <a href="cart.html" class="nav-icon-btn" title="Cart" style="position:relative">
+          🛒
+          <span class="cart-badge" style="display:none">0</span>
+        </a>
+        <div class="hamburger" id="hamburger">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="index.html">🏠 Home</a>
+    <a href="menu.html">☕ Menu</a>
+    <a href="subscription.html">⭐ Subscription</a>
+    <a href="track-order.html">🚚 Track Order</a>
+    <a href="cart.html">🛒 Cart</a>
+  </div>
+
+  <!-- ================= PAGE HERO ================= -->
+  <header class="page-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a> &rsaquo; <span>My Account</span>
+      </div>
+      <h1>Customer Account</h1>
+      <p>Manage your personal profile, review order history, and track artisanal coffee deliveries.</p>
+    </div>
+  </header>
+
+  <!-- ================= MAIN SECTION ================= -->
+  <main class="section" style="padding-top: 40px; padding-bottom: 80px;">
+    <div class="container">
+
+      <!-- Loading State -->
+      <div id="account-loading" style="text-align: center; padding: 60px 0;">
+        <div style="font-size: 2.5rem; margin-bottom: 16px;">☕</div>
+        <h3>Loading your account details...</h3>
+      </div>
+
+      <!-- Account Layout -->
+      <div id="account-layout" class="profile-layout" style="display: none;">
+
+        <!-- Sidebar -->
+        <aside class="profile-sidebar">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar" id="avatar-initial">C</div>
+          </div>
+          <h2 class="profile-name" id="sidebar-name">Loading...</h2>
+          <div class="profile-email" id="sidebar-email">customer@example.com</div>
+
+          <div class="profile-nav">
+            <div class="profile-nav-item active" onclick="switchTab('profile', this)">
+              <span>👤</span> Personal Info
+            </div>
+            <div class="profile-nav-item" onclick="switchTab('orders', this)">
+              <span>📦</span> My Orders <span id="orders-badge" style="margin-left: auto; background: var(--coffee); color: white; border-radius: var(--radius-full); padding: 2px 8px; font-size: 0.75rem;">0</span>
+            </div>
+            <div class="profile-nav-item" onclick="switchTab('security', this)">
+              <span>🔒</span> Security &amp; Password
+            </div>
+            <div class="profile-nav-item logout" onclick="customerLogout()">
+              <span>🚪</span> Sign Out
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="profile-main">
+
+          <!-- ── TAB 1: PERSONAL INFORMATION ── -->
+          <div id="tab-profile" class="tab-content active">
+            <div class="profile-section-card">
+              <h3>
+                Personal Information
+                <button type="button" id="btn-toggle-edit" class="edit-btn" onclick="toggleEditProfile()">
+                  ✏️ Edit Details
+                </button>
+              </h3>
+
+              <div id="profile-alert" style="display: none; padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.88rem; margin-bottom: 20px;"></div>
+
+              <!-- View Mode -->
+              <div id="profile-view-mode" class="profile-info-grid">
+                <div class="info-item">
+                  <div class="info-label">Full Name</div>
+                  <div class="info-value" id="view-name">—</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Email Address</div>
+                  <div class="info-value" id="view-email">—</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Phone Number</div>
+                  <div class="info-value" id="view-phone">—</div>
+                </div>
+                <div class="info-item">
+                  <div class="info-label">Account Created</div>
+                  <div class="info-value" id="view-created">—</div>
+                </div>
+              </div>
+
+              <!-- Edit Form Mode -->
+              <form id="profile-edit-form" style="display: none; margin-top: 10px;" onsubmit="handleSaveProfile(event)">
+                <div class="form-grid-2" style="margin-bottom: 18px;">
+                  <div class="form-group">
+                    <label class="form-label" for="edit-name">Full Name</label>
+                    <input type="text" id="edit-name" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="edit-phone">Phone Number</label>
+                    <input type="tel" id="edit-phone" class="form-input" placeholder="+91 98765 43210">
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                  <label class="form-label">Email Address (Managed by Supabase Auth)</label>
+                  <input type="email" id="edit-email" class="form-input" disabled style="background: var(--gray-100); color: var(--gray-600); cursor: not-allowed;">
+                </div>
+                <div style="display: flex; gap: 12px;">
+                  <button type="submit" id="btn-save-profile" class="btn btn-primary">Save Changes</button>
+                  <button type="button" class="btn btn-secondary" onclick="toggleEditProfile(false)">Cancel</button>
+                </div>
+              </form>
+
+            </div>
+
+            <!-- Perks / Banner -->
+            <div class="sub-card-profile" style="margin-top: 24px;">
+              <div>
+                <h4>Brew &amp; Bean Artisanal Rewards</h4>
+                <p>Enjoy expedited ordering, personalized roasts, and real-time delivery status updates.</p>
+              </div>
+              <a href="menu.html" class="btn btn-secondary" style="background: white; color: var(--coffee); border: none;">Order Coffee</a>
+            </div>
+          </div>
+
+          <!-- ── TAB 2: MY ORDERS ── -->
+          <div id="tab-orders" class="tab-content">
+            <div class="profile-section-card">
+              <h3>
+                Order History
+                <span id="order-count-text" style="font-size: 0.88rem; color: var(--gray-500); font-weight: 500;"></span>
+              </h3>
+
+              <div id="orders-container">
+                <div style="text-align: center; padding: 40px 0; color: var(--gray-500);">
+                  Loading your orders...
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TAB 3: SECURITY & PASSWORD ── -->
+          <div id="tab-security" class="tab-content">
+            <div class="profile-section-card">
+              <h3>Security &amp; Password</h3>
+
+              <div id="security-alert" style="display: none; padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.88rem; margin-bottom: 20px;"></div>
+
+              <p style="color: var(--gray-600); font-size: 0.9rem; margin-bottom: 20px;">
+                Update your account password. Choose a strong password with at least 6 characters.
+              </p>
+
+              <form id="change-password-form" style="max-width: 440px;" onsubmit="handleChangePassword(event)">
+                <div class="form-group" style="margin-bottom: 18px;">
+                  <label class="form-label" for="sec-new-password">New Password</label>
+                  <input type="password" id="sec-new-password" class="form-input" minlength="6" placeholder="At least 6 characters" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 24px;">
+                  <label class="form-label" for="sec-confirm-password">Confirm New Password</label>
+                  <input type="password" id="sec-confirm-password" class="form-input" minlength="6" placeholder="Repeat new password" required>
+                </div>
+                <button type="submit" id="btn-save-password" class="btn btn-primary">Update Password</button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= ORDER DETAILS MODAL ================= -->
+  <div class="modal-overlay" id="order-modal" onclick="closeOrderModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeOrderModal()">✕</button>
+      <div id="modal-content">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <div class="logo-icon">☕</div>
+            Brew &amp; Bean
+          </div>
+          <p>Crafting extraordinary coffee experiences since 2018. Every cup is a celebration of passion, origin, and perfection.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <a href="index.html">Home</a>
+          <a href="menu.html">Artisanal Menu</a>
+          <a href="subscription.html">Subscriptions</a>
+          <a href="cart.html">Cart</a>
+        </div>
+        <div class="footer-col">
+          <h4>Need Courier Help?</h4>
+          <a href="#">📍 42 MG Road, Bangalore</a>
+          <a href="tel:+918888888888">📞 +91 88888 88888</a>
+          <a href="mailto:hello@brewandbean.in">✉️ hello@brewandbean.in</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 Brew &amp; Bean Artisanal Roasters. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/customer-auth.js"></script>
+
+  <script>
+    let currentCustomer = null;
+    let customerOrders = [];
+
+    // Format currency
+    function formatINR(amount) {
+      return '₹' + Number(amount || 0).toLocaleString('en-IN', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+      });
+    }
+
+    // Switch between Sidebar tabs
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.profile-nav-item').forEach(item => item.classList.remove('active'));
+      if (el) el.classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      const activeTab = document.getElementById(`tab-${tabId}`);
+      if (activeTab) activeTab.classList.add('active');
+    }
+
+    // Toggle Profile edit form
+    function toggleEditProfile(show) {
+      const viewMode = document.getElementById('profile-view-mode');
+      const editForm = document.getElementById('profile-edit-form');
+      const btnToggle = document.getElementById('btn-toggle-edit');
+
+      const isEditing = show !== undefined ? show : editForm.style.display === 'none';
+
+      if (isEditing) {
+        viewMode.style.display = 'none';
+        editForm.style.display = 'block';
+        btnToggle.textContent = '✕ Close Edit';
+      } else {
+        viewMode.style.display = 'grid';
+        editForm.style.display = 'none';
+        btnToggle.textContent = '✏️ Edit Details';
+      }
+    }
+
+    function showProfileAlert(msg, type = 'error') {
+      const el = document.getElementById('profile-alert');
+      el.textContent = msg;
+      el.style.display = 'block';
+      if (type === 'error') {
+        el.style.background = '#fdecea';
+        el.style.color = '#c0392b';
+        el.style.border = '1px solid #fadbd8';
+      } else {
+        el.style.background = '#edf7f1';
+        el.style.color = '#2d8a4e';
+        el.style.border = '1px solid #d4efdf';
+      }
+    }
+
+    function showSecurityAlert(msg, type = 'error') {
+      const el = document.getElementById('security-alert');
+      el.textContent = msg;
+      el.style.display = 'block';
+      if (type === 'error') {
+        el.style.background = '#fdecea';
+        el.style.color = '#c0392b';
+        el.style.border = '1px solid #fadbd8';
+      } else {
+        el.style.background = '#edf7f1';
+        el.style.color = '#2d8a4e';
+        el.style.border = '1px solid #d4efdf';
+      }
+    }
+
+    // Page initialization
+    document.addEventListener('DOMContentLoaded', async () => {
+      currentCustomer = await getCurrentCustomer();
+
+      // Guard: Customer must be logged in
+      if (!currentCustomer || !currentCustomer.user) {
+        window.location.href = 'login.html?redirect=account.html';
+        return;
+      }
+
+      // Populate UI
+      populateProfileUI();
+      loadCustomerOrders();
+    });
+
+    function populateProfileUI() {
+      const profile = currentCustomer.profile || {};
+      const user = currentCustomer.user;
+
+      const name = profile.full_name || user.user_metadata?.full_name || 'Coffee Lover';
+      const email = profile.email || user.email || '';
+      const phone = profile.phone || user.user_metadata?.phone || 'Not provided';
+      const createdDate = new Date(user.created_at).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+
+      // Sidebar
+      document.getElementById('sidebar-name').textContent = name;
+      document.getElementById('sidebar-email').textContent = email;
+      document.getElementById('avatar-initial').textContent = name.charAt(0).toUpperCase();
+
+      // View mode
+      document.getElementById('view-name').textContent = name;
+      document.getElementById('view-email').textContent = email;
+      document.getElementById('view-phone').textContent = phone;
+      document.getElementById('view-created').textContent = createdDate;
+
+      // Edit Form fields
+      document.getElementById('edit-name').value = name;
+      document.getElementById('edit-email').value = email;
+      document.getElementById('edit-phone').value = (phone === 'Not provided' ? '' : phone);
+
+      // Hide loading, show layout
+      document.getElementById('account-loading').style.display = 'none';
+      document.getElementById('account-layout').style.display = 'grid';
+    }
+
+    // Handle Edit Profile Save
+    async function handleSaveProfile(e) {
+      e.preventDefault();
+      const newName = document.getElementById('edit-name').value.trim();
+      const newPhone = document.getElementById('edit-phone').value.trim();
+      const btn = document.getElementById('btn-save-profile');
+
+      if (!newName) {
+        showProfileAlert('Please enter your full name.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      try {
+        await customerUpdateProfile(newName, newPhone);
+        
+        // Refresh customer state
+        currentCustomer = await getCurrentCustomer();
+        populateProfileUI();
+        toggleEditProfile(false);
+        showProfileAlert('Profile updated successfully!', 'success');
+      } catch (err) {
+        console.error('Update profile error:', err);
+        showProfileAlert(err.message || 'Failed to update profile.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Save Changes';
+      }
+    }
+
+    // Handle Change Password
+    async function handleChangePassword(e) {
+      e.preventDefault();
+      const p1 = document.getElementById('sec-new-password').value;
+      const p2 = document.getElementById('sec-confirm-password').value;
+      const btn = document.getElementById('btn-save-password');
+
+      if (!p1 || p1.length < 6) {
+        showSecurityAlert('Password must be at least 6 characters long.');
+        return;
+      }
+      if (p1 !== p2) {
+        showSecurityAlert('Passwords do not match.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Updating...';
+
+      try {
+        await customerUpdatePassword(p1);
+        showSecurityAlert('Your password has been changed successfully!', 'success');
+        document.getElementById('change-password-form').reset();
+      } catch (err) {
+        console.error('Change password error:', err);
+        showSecurityAlert(err.message || 'Failed to update password.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Update Password';
+      }
+    }
+
+    // Fetch and display customer's orders
+    async function loadCustomerOrders() {
+      const container = document.getElementById('orders-container');
+      const badge = document.getElementById('orders-badge');
+      const countText = document.getElementById('order-count-text');
+
+      const sb = getSupabase();
+      if (!sb) {
+        container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--error);">Database not connected.</div>`;
+        return;
+      }
+
+      try {
+        const userId = currentCustomer.user.id;
+        const { data: orders, error } = await sb
+          .from('orders')
+          .select(`
+            *,
+            order_items (*)
+          `)
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        customerOrders = orders || [];
+        const count = customerOrders.length;
+        badge.textContent = count;
+        countText.textContent = `(${count} order${count === 1 ? '' : 's'})`;
+
+        if (count === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 50px 20px;">
+              <div style="font-size: 3.5rem; margin-bottom: 14px; opacity: 0.5;">📦</div>
+              <h3 style="margin-bottom: 8px;">No orders found yet</h3>
+              <p style="color: var(--gray-600); margin-bottom: 24px;">
+                You haven't placed any orders with your account yet. Explore our handcrafted blends!
+              </p>
+              <a href="menu.html" class="btn btn-primary">Browse Artisanal Menu</a>
+            </div>
+          `;
+          return;
+        }
+
+        // Render Order Cards
+        let html = '<div class="orders-list">';
+        customerOrders.forEach(order => {
+          const dateStr = new Date(order.created_at).toLocaleDateString('en-US', {
+            year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+          });
+
+          const itemsCount = (order.order_items || []).reduce((acc, it) => acc + (it.quantity || 1), 0);
+          const firstItem = order.order_items && order.order_items[0] ? order.order_items[0].product_name : 'Coffee';
+          const itemsSummary = itemsCount > 1 ? `${firstItem} + ${itemsCount - 1} other item(s)` : firstItem;
+
+          const currentStatus = order.order_status || order.status || 'Pending';
+          const statusClass = `status-${currentStatus.toLowerCase().replace(/\s+/g, '_')}`;
+
+          html += `
+            <div class="order-card">
+              <div class="order-card-header">
+                <div>
+                  <div class="order-id">Order <span>#${escapeHtml(order.order_number)}</span></div>
+                  <div class="order-date">${dateStr}</div>
+                </div>
+                <div>
+                  <span class="order-status-badge ${statusClass}">
+                    ● ${escapeHtml(currentStatus)}
+                  </span>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 18px; font-size: 0.95rem; color: var(--dark);">
+                ☕ <strong>Items:</strong> ${escapeHtml(itemsSummary)}
+              </div>
+
+              <div class="order-card-footer">
+                <div class="order-total">${formatINR(order.total_amount)}</div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                  <button type="button" class="btn btn-sm btn-secondary" onclick="openOrderModal('${order.id}')">
+                    🔍 View Details
+                  </button>
+                  <a href="track-order.html?order=${encodeURIComponent(order.order_number)}&phone=${encodeURIComponent(order.customer_phone || '')}" class="btn btn-sm btn-primary">
+                    🚚 Track Live
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        html += '</div>';
+
+        container.innerHTML = html;
+
+      } catch (err) {
+        console.error('Error fetching orders:', err);
+        container.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--error);">
+            Unable to load orders at this moment. Please refresh or try again later.
+          </div>
+        `;
+      }
+    }
+
+    // Open Order Details Modal
+    function openOrderModal(orderId) {
+      const order = customerOrders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const dateStr = new Date(order.created_at).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+
+      let itemsHtml = '';
+      (order.order_items || []).forEach(item => {
+        const itemSize = item.selected_size || item.variant_name || '';
+        const unitPrice = item.product_price ?? item.unit_price ?? 0;
+        const itemTotal = item.subtotal ?? item.total_price ?? (unitPrice * item.quantity);
+
+        itemsHtml += `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--gray-200); font-size: 0.9rem;">
+            <div>
+              <div style="font-weight: 600; color: var(--dark);">${escapeHtml(item.product_name)}</div>
+              <div style="font-size: 0.8rem; color: var(--gray-500);">${itemSize ? escapeHtml(itemSize) + ' &bull; ' : ''}Qty: ${item.quantity} &times; ${formatINR(unitPrice)}</div>
+            </div>
+            <div style="font-weight: 700; color: var(--coffee);">${formatINR(itemTotal)}</div>
+          </div>
+        `;
+      });
+
+      const currentStatus = order.order_status || order.status || 'Pending';
+      const addressText = order.delivery_address || order.shipping_address || (order.order_type === 'Takeaway' ? 'Store Pickup (42 MG Road, Bangalore)' : 'Not specified');
+      const deliveryFee = order.delivery_fee ?? order.shipping_cost ?? 0;
+
+      const modalContent = document.getElementById('modal-content');
+      modalContent.innerHTML = `
+        <div style="margin-bottom: 20px; border-bottom: 1px solid var(--gray-200); padding-bottom: 14px;">
+          <h2 style="font-size: 1.4rem; margin-bottom: 4px;">Order #${escapeHtml(order.order_number)}</h2>
+          <div style="font-size: 0.85rem; color: var(--gray-500);">${dateStr} &bull; <strong style="text-transform: capitalize; color: var(--coffee);">${escapeHtml(currentStatus)}</strong></div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <h4 style="font-size: 0.95rem; margin-bottom: 10px;">Ordered Items</h4>
+          <div style="background: var(--gray-100); padding: 12px 16px; border-radius: var(--radius-md);">
+            ${itemsHtml || '<p style="font-size: 0.85rem; color: var(--gray-500);">No item details recorded.</p>'}
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; font-size: 0.88rem;">
+          <div>
+            <div style="font-weight: 700; margin-bottom: 4px;">Delivery / Pickup:</div>
+            <div style="color: var(--gray-600); line-height: 1.5;">${escapeHtml(addressText)}</div>
+            <div style="color: var(--gray-600); margin-top: 4px;">📞 ${escapeHtml(order.customer_phone || '—')}</div>
+          </div>
+          <div>
+            <div style="font-weight: 700; margin-bottom: 4px;">Payment Info:</div>
+            <div style="color: var(--gray-600);">Method: <strong style="text-transform: uppercase;">${escapeHtml(order.payment_method || 'COD')}</strong></div>
+            <div style="color: var(--gray-600);">Payment Status: <strong style="text-transform: capitalize;">${escapeHtml(order.payment_status || 'Pending')}</strong></div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--gray-200); padding-top: 14px; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 6px;">
+            <span style="color: var(--gray-600);">Subtotal:</span>
+            <span>${formatINR(order.subtotal || order.total_amount)}</span>
+          </div>
+          ${deliveryFee ? `
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 6px;">
+            <span style="color: var(--gray-600);">Delivery Fee:</span>
+            <span>${formatINR(deliveryFee)}</span>
+          </div>` : ''}
+          ${order.discount_amount ? `
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 6px; color: var(--success);">
+            <span>Discount:</span>
+            <span>-${formatINR(order.discount_amount)}</span>
+          </div>` : ''}
+          <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 700; color: var(--coffee); border-top: 1px dashed var(--gray-300); padding-top: 8px; margin-top: 8px;">
+            <span>Total:</span>
+            <span>${formatINR(order.total_amount)}</span>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <a href="track-order.html?order=${encodeURIComponent(order.order_number)}&phone=${encodeURIComponent(order.customer_phone || '')}" class="btn btn-primary">
+            🚚 Track Live Status
+          </a>
+          <button type="button" class="btn btn-secondary" onclick="closeOrderModal()">Close</button>
+        </div>
+      `;
+
+      document.getElementById('order-modal').style.display = 'flex';
+    }
+
+      document.getElementById('order-modal').style.display = 'flex';
+    }
+
+    function closeOrderModal(e) {
+      if (e && e.target !== e.currentTarget && !e.target.classList.contains('modal-close-btn')) return;
+      document.getElementById('order-modal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

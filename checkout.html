@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guest Checkout — Brew & Bean</title>
+  <meta name="description" content="Secure guest checkout for your artisanal coffee order. No registration needed.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <nav class="navbar" id="main-navbar">
+    <div class="container">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">☕</div>
+        Brew & Bean
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="menu.html">Menu</a>
+        <a href="subscription.html">Subscription</a>
+        <a href="track-order.html">Track Order</a>
+      </div>
+      <div class="nav-actions">
+        <a href="track-order.html" class="nav-icon-btn" title="Track Order">🚚</a>
+        <a href="cart.html" class="nav-icon-btn" title="Cart" style="position:relative">
+          🛒
+          <span class="cart-badge" style="display:none">0</span>
+        </a>
+        <div class="hamburger" id="hamburger">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav" id="mobile-nav">
+    <a href="index.html">🏠 Home</a>
+    <a href="menu.html">☕ Menu</a>
+    <a href="subscription.html">⭐ Subscription</a>
+    <a href="track-order.html">🚚 Track Order</a>
+    <a href="cart.html">🛒 Cart</a>
+  </div>
+
+  <!-- ================= PAGE HERO ================= -->
+  <header class="page-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span>/</span>
+        <a href="cart.html">Cart</a>
+        <span>/</span>
+        <span>Guest Checkout</span>
+      </div>
+      <h1>Fast Guest Checkout</h1>
+      <p>No account required. Complete your order in seconds and receive your hot brew in 30 minutes.</p>
+    </div>
+  </header>
+
+  <!-- ================= CHECKOUT MAIN ================= -->
+  <main class="section">
+    <div class="container">
+      <div class="checkout-layout">
+        
+        <!-- Left: Form Steps -->
+        <div class="checkout-forms">
+          
+          <!-- Step 1: Delivery Address Form -->
+          <div class="checkout-card">
+            <h3><span class="step-num">1</span> Order Type & Details</h3>
+            
+            <!-- Order Type Toggle -->
+            <div style="margin-bottom: 24px;">
+              <div class="form-label">Select Order Type:</div>
+              <div class="payment-options" style="display:flex; gap:12px;">
+                <label class="payment-option selected" id="co-btn-delivery" style="flex:1;" onclick="setCheckoutOrderType('Home Delivery')">
+                  <input type="radio" name="order_type_choice" value="Home Delivery" checked>
+                  <div class="payment-radio"></div>
+                  <div>
+                    <div class="payment-name">🛵 Home Delivery</div>
+                    <div class="payment-desc">₹30 fee (FREE above ₹499 or Premium)</div>
+                  </div>
+                </label>
+                <label class="payment-option" id="co-btn-takeaway" style="flex:1;" onclick="setCheckoutOrderType('Takeaway')">
+                  <input type="radio" name="order_type_choice" value="Takeaway">
+                  <div class="payment-radio"></div>
+                  <div>
+                    <div class="payment-name">🛍️ Takeaway / Pickup</div>
+                    <div class="payment-desc">Pickup at 42 MG Road (FREE)</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <form id="shipping-form" onsubmit="event.preventDefault();">
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="cust-name">Full Name *</label>
+                  <input type="text" id="cust-name" class="form-input" placeholder="e.g. Harish Kumar" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="cust-phone">Mobile Number *</label>
+                  <input type="tel" id="cust-phone" class="form-input" placeholder="10-digit mobile number" required>
+                  <span style="font-size:0.75rem; color:var(--gray-400); margin-top:4px; display:block;">Active members receive instant discount</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cust-email">Email Address (Optional)</label>
+                <input type="email" id="cust-email" class="form-input" placeholder="For order receipt & tracking updates">
+              </div>
+
+              <div id="delivery-address-group">
+                <div class="form-group">
+                  <label class="form-label" for="cust-address">Delivery Address (House / Flat / Street) *</label>
+                  <input type="text" id="cust-address" class="form-input" placeholder="e.g. 42 MG Road, Koramangala 4th Block">
+                </div>
+
+                <div class="form-grid-3">
+                  <div class="form-group">
+                    <label class="form-label" for="cust-city">City *</label>
+                    <input type="text" id="cust-city" class="form-input" value="Bangalore">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="cust-state">State *</label>
+                    <input type="text" id="cust-state" class="form-input" value="Karnataka">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="cust-pincode">Pincode</label>
+                    <input type="text" id="cust-pincode" class="form-input" placeholder="560034">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="cust-notes">Special Instructions (Optional)</label>
+                <input type="text" id="cust-notes" class="form-input" placeholder="e.g. Ring bell, leave with security, extra stirrer">
+              </div>
+            </form>
+          </div>
+
+          <!-- Step 2: Payment Method -->
+          <div class="checkout-card">
+            <h3><span class="step-num">2</span> Payment Method</h3>
+            
+            <div class="payment-options">
+              <!-- Cash on Delivery -->
+              <label class="payment-option selected" onclick="selectPaymentMethod('cod', this)">
+                <input type="radio" name="payment_method" value="cod" checked>
+                <div class="payment-radio"></div>
+                <div class="payment-icon">💵</div>
+                <div class="payment-info">
+                  <div class="payment-name">Cash on Delivery (Recommended)</div>
+                  <div class="payment-desc">Pay cash or UPI to the delivery courier when your hot coffee arrives</div>
+                </div>
+              </label>
+
+              <!-- Instant UPI -->
+              <label class="payment-option" onclick="selectPaymentMethod('upi', this)">
+                <input type="radio" name="payment_method" value="upi">
+                <div class="payment-radio"></div>
+                <div class="payment-icon">📱</div>
+                <div class="payment-info">
+                  <div class="payment-name">UPI / Online (Demo Simulation)</div>
+                  <div class="payment-desc">GPay, PhonePe, Paytm, BHIM (Ready for Razorpay Integration)</div>
+                </div>
+                <div class="payment-logos">
+                  <span class="payment-logo">GPay</span>
+                  <span class="payment-logo">PhonePe</span>
+                </div>
+              </label>
+            </div>
+
+            <div id="payment-note" style="margin-top:16px; font-size:0.85rem; color:var(--gray-600); background:var(--gray-100); padding:12px 16px; border-radius:var(--radius-sm);">
+              ℹ️ <strong>Payment Transparency:</strong> Orders placed via Cash on Delivery or UPI remain marked <em>Pending Verification</em> until payment is completed upon delivery.
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Right: Order Summary Sidebar -->
+        <div class="order-summary">
+          <h3>Your Order Summary</h3>
+          
+          <div id="checkout-items-list" style="max-height: 280px; overflow-y: auto; margin-bottom: 20px;">
+            <!-- Rendered via js/checkout.js -->
+          </div>
+
+          <div style="border-top: 1px solid var(--gray-200); padding-top: 16px;">
+            <div class="summary-row">
+              <span class="label">Items Subtotal</span>
+              <span class="value" id="co-subtotal">₹0</span>
+            </div>
+            <div class="summary-row" id="co-discount-row" style="display:none;">
+              <span class="label" id="co-discount-label">Member Discount</span>
+              <span class="value discount" id="co-discount">-₹0</span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Estimated GST (5%)</span>
+              <span class="value" id="co-tax">Included</span>
+            </div>
+            <div class="summary-row">
+              <span class="label">Delivery Fee</span>
+              <span class="value" id="co-delivery">FREE</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total Payable</span>
+              <span id="co-total" style="color:var(--coffee);">₹0</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-full btn-lg" id="btn-place-order" style="margin-top:20px;" onclick="submitGuestOrder(event)">
+            Place Order Now
+          </button>
+
+          <div style="font-size:0.78rem; color:var(--gray-400); text-align:center; margin-top:14px; line-height: 1.5;">
+            By placing an order, you agree to Brew & Bean's Terms of Service. Server-side validation powered by Supabase.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <div class="logo-icon">☕</div>
+            Brew & Bean
+          </div>
+          <p>Crafting extraordinary coffee experiences since 2018. Every cup is a celebration of passion, origin, and perfection.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Customer Care</h4>
+          <a href="track-order.html">Track An Order</a>
+          <a href="menu.html">Artisanal Menu</a>
+          <a href="subscription.html">Subscriptions</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact Us</h4>
+          <a href="#">📍 42 MG Road, Bangalore</a>
+          <a href="tel:+918888888888">📞 +91 88888 88888</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 Brew & Bean Artisanal Roasters. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Supabase JS SDK via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- App Scripts -->
+  <script src="js/supabase.js"></script>
+  <script src="js/customer-auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    function selectPaymentMethod(val, labelEl) {
+      document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('selected'));
+      labelEl.classList.add('selected');
+    }
+  </script>
+</body>
+</html>
+
